@@ -106,6 +106,27 @@ env \
 
 container_id_file=${build_dir}/container_id
 # shellcheck disable=SC2086
+if [ -n "$INPUT_HOST_ARCH" ]; then
+container_id=$(
+	docker run \
+		$INPUT_EXTRA_DOCKER_ARGS \
+		--cidfile="$container_id_file" \
+		--detach \
+		--env-file="$env_file" \
+		--env=GITHUB_ACTION_PATH=/github/action \
+		--env=GITHUB_WORKSPACE=/github/workspace \
+		--env=INPUT_EXTRA_REPOS \
+		--mount="type=bind,src=${GITHUB_ACTION_PATH},dst=/github/action,ro" \
+		--mount="type=bind,src=${build_dir},dst=/github/build" \
+		--mount="type=bind,src=${GITHUB_WORKSPACE},dst=/github/workspace" \
+		--platform=linux/$INPUT_HOST_ARCH \
+		--rm \
+		--workdir=/github/workspace \
+		-- \
+		"$INPUT_DOCKER_IMAGE" \
+		tail -f /dev/null
+)
+else
 container_id=$(
 	docker run \
 		$INPUT_EXTRA_DOCKER_ARGS \
@@ -124,6 +145,7 @@ container_id=$(
 		"$INPUT_DOCKER_IMAGE" \
 		tail -f /dev/null
 )
+fi
 
 in_container()
 {
