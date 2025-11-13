@@ -12,6 +12,11 @@ if [ -n "$INPUT_HOST_ARCH" ]; then
 	INPUT_BUILDPACKAGE_OPTS="$INPUT_BUILDPACKAGE_OPTS --host-arch=$INPUT_HOST_ARCH"
 fi
 
+# Run pre commands if specified
+if [ -n "$BUILD_PRE" ]; then
+	eval "$BUILD_PRE"
+fi
+
 cd -- "$INPUT_SOURCE_DIR"
 # shellcheck disable=SC2086
 dpkg-buildpackage $INPUT_BUILDPACKAGE_OPTS
