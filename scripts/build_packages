@@ -13,7 +13,7 @@ if [ -n "$INPUT_HOST_ARCH" ]; then
 fi
 
 # Run pre commands if specified
-if [ -n "$BUILD_PRE" ]; then
+if [ ! -z ${BUILD_PRE+x} ]; then
 	eval "$BUILD_PRE"
 fi
 
